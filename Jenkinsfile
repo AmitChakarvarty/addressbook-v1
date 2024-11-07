@@ -15,6 +15,11 @@ pipeline {
             }
         }
         stage('UnitTest') {
+            when{
+                expresssion{
+                    params.executeTest == true
+                }
+            }
             steps {
                 echo 'UnitTest the Code'
             }
