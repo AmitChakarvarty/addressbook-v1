@@ -21,6 +21,11 @@ pipeline {
                 echo "Deploying the app version ${params.APPVERSION}"
                 sh "mvn pmd:pmd"
             }
+            post {
+                always {
+                    pmd pattern: 'target/pmd.xml'
+                }
+            }
         }
         stage('UnitTest') {
             when{
@@ -31,6 +36,11 @@ pipeline {
             steps {
                 echo 'UnitTest the Code'
                 sh "mvn test"
+            }
+            post {
+                always{
+                    junit 'target/surefire-reports/*.xml'
+                }
             }
         }
         stage('Package') {
