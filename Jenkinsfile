@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent none
 
     parameters{
         string(name:'Env',defaultValue:'Test',description:'version to deploy')
@@ -9,6 +9,7 @@ pipeline {
 
     stages {
         stage('Compile') {
+            agent any
             steps {
                 echo 'Compiling the code'
                 echo "compiling in env: ${params.Env}"
@@ -16,6 +17,7 @@ pipeline {
             }
         }
         stage('CodeReview') {
+            agent any
             steps {
                 echo 'Reviewing the Code'
                 echo "Deploying the app version ${params.APPVERSION}"
@@ -28,6 +30,7 @@ pipeline {
           //  }
         }
         stage('UnitTest') {
+            agent any
             when{
                 expression{
                     params.executeTest == true
@@ -44,6 +47,7 @@ pipeline {
             }
         }
         stage('Package') {
+            agent {label 'linux_slave'}
             steps {
                 echo 'Packaging the Code'
                 echo "Deploying the app version ${params.APPVERSION}"
@@ -51,6 +55,7 @@ pipeline {
             }
         }
         stage('Deploy') {
+            agent any
             input{
                 message "Select the platform to deploy"
                 ok "Platform selected"
