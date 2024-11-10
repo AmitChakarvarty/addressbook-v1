@@ -9,7 +9,9 @@ pipeline {
         booleanParam(name:'executeTest',defaultValue: true,description:'decide to run tc')
         choice(name:'APPVERSION',choices:['1.1','1.2','1.3'])
     }
-
+    environment {
+        DEV_SERVER='ec2-user@172.31.0.253'
+    }
     stages {
         stage('Compile') {
             agent any
@@ -33,12 +35,13 @@ pipeline {
           //  }
         }
         stage('UnitTest') {
-            agent any
+            agent {label 'linux_slave'}
             when{
                 expression{
                     params.executeTest == true
                 }
             }
+            
             steps {
                 echo 'UnitTest the Code'
                 sh "mvn test"
@@ -50,13 +53,19 @@ pipeline {
             }
         }
         stage('Package') {
-            agent {label 'linux_slave'}
+            //agent {label 'linux_slave'}
+            agent any
             steps {
+                script{
+                sshagent(['slave2']) {
                 echo 'Packaging the Code'
                 echo "Deploying the app version ${params.APPVERSION}"
-                sh "mvn package"
+                sh "scp -o StrictHostKeyChecking=no server-script.sh ${DEV_SERVER}:/home/ec2-user"
+                sh "ssh -o StrictHostKeyChecking=no ${DEV_SERVER} 'bach /home/ec2-user/server-script.sh'"
             }
         }
+            }
+         }
         stage('Deploy') {
             agent any
             input{
