@@ -61,7 +61,7 @@ pipeline {
                 echo 'Packaging the Code'
                 echo "Deploying the app version ${params.APPVERSION}"
                 sh "scp -o StrictHostKeyChecking=no server-script.sh ${DEV_SERVER}:/home/ec2-user"
-                sh "ssh -o StrictHostKeyChecking=no ${DEV_SERVER} 'bach /home/ec2-user/server-script.sh'"
+                sh "ssh -o StrictHostKeyChecking=no ${DEV_SERVER} 'bash /home/ec2-user/server-script.sh'"
             }
         }
             }
