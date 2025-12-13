@@ -17,6 +17,7 @@ pipeline {
     stages {
 
         stage('Dev Stage') {
+            agent any
 
             steps {
 
@@ -35,6 +36,7 @@ pipeline {
         }
 
         stage('Test Stage') {
+           agent {label 'linux-slave'}
 
             steps {
 
@@ -57,6 +59,7 @@ pipeline {
         }
 
         stage('Prod Stage') {
+            agent any
 
             steps {
 
