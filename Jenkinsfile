@@ -3,33 +3,76 @@ pipeline {
     agent any
 
 
+    parameters {
+
+        string(name: 'ENVIRONMENT', defaultValue: 'dev', description: 'Environment to deploy to')
+
+        booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Run tests?')
+
+        choice(name: 'DEPLOY_SERVER', choices: ['dev', 'test', 'prod'], description: 'Choose deployment server')
+
+    }
+
+
     stages {
 
-        stage('Compile') {
+        stage('Dev Stage') {
 
             steps {
 
-                echo 'Compiling the source code...'
+                script {
+
+                    if (params.ENVIRONMENT == 'dev') {
+
+                        echo "Building for development environment"
+
+                    }
+
+                }
 
             }
 
         }
 
-        stage('Test') {
+        stage('Test Stage') {
 
             steps {
 
-                echo 'Running the tests...'
+                script {
+
+                    if (params.RUN_TESTS) {
+
+                        echo "Running tests in the ${params.ENVIRONMENT} environment"
+
+                    } else {
+
+                        echo "Skipping tests"
+
+                    }
+
+                }
 
             }
 
         }
 
-        stage('Package') {
+        stage('Prod Stage') {
 
             steps {
 
-                echo 'Packaging the application...'
+                script {
+
+                    if (params.DEPLOY_SERVER == 'prod') {
+
+                        echo "Deploying to production server"
+
+                    } else {
+
+                        echo "Deploying to ${params.DEPLOY_SERVER} server"
+
+                    }
+
+                }
 
             }
 
